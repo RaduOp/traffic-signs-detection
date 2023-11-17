@@ -1,30 +1,18 @@
 """
 This file is meant for live testing of the trained model.
 """
+import random
+import time
 
 import cv2
-import pyautogui
+import mss
 import yaml
 import numpy as np
 from ultralytics import YOLO
 import argparse
 from numpy import ndarray
 
-
-def process_frame(frame: ndarray, model: YOLO, names: list) -> ndarray:
-    results = model.predict(frame)
-
-    for result in results:
-        boxes = result.boxes
-        for box, conf, class_name in zip(boxes.xyxy.tolist(), boxes.conf.tolist(),
-                                         boxes.cls.tolist()):
-            x, y, w, h = box
-            x, y, w, h = int(x), int(y), int(w), int(h)
-            label = f"{names[int(class_name)]}, {conf:.2f}"
-            cv2.rectangle(frame, (x, y), (w, h), (0, 255, 0), 2)
-            cv2.putText(frame, label, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
-                        (0, 0, 255), 2)
-    return frame
+from use_model import ImageDetector
 
 
 def test_on_video(model: YOLO, names: list, path_to_video: str) -> None:
@@ -50,24 +38,34 @@ def test_on_video(model: YOLO, names: list, path_to_video: str) -> None:
     cv2.destroyAllWindows()
 
 
-def test_live_on_screen(model: YOLO, names: list) -> None:
-    screen_width, screen_height = pyautogui.size()
-    screen_resolution = (screen_width, screen_height)
+def test_live_on_screen_with_multiple_monitors(image_detector: ImageDetector) -> None:
+    with mss.mss() as sct:
+        # Get information of monitor 2
+        monitor_number = 1
+        mon = sct.monitors[monitor_number]
 
-    fourcc = cv2.VideoWriter_fourcc(*"XVID")
-    out = cv2.VideoWriter("screen_recording.avi", fourcc, 20.0, screen_resolution)
-    while True:
-        screenshot = pyautogui.screenshot()
-        frame = np.array(screenshot)
+        # The screen part to capture
+        monitor = {
+            "top": mon["top"],
+            "left": mon["left"],
+            "width": mon["width"],
+            "height": mon["height"],
+            "mon": monitor_number,
+        }
 
-        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        frame = process_frame(frame, model, names)
-        cv2.imshow('Processed Frame', frame)
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
+        # Grab the data
+        while True:
+            screenshot = sct.grab(monitor)
+            frame = np.array(screenshot)
+            frame = cv2.cvtColor(frame, cv2.COLOR_RGBA2RGB)
 
-    out.release()
-    cv2.destroyAllWindows()
+            frame = image_detector.process_frame(frame)
+            cv2.imshow('Processed Frame', frame)
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
+    # output = "sct-mon{mon}_{top}x{left}_{width}x{height}.png".format(**monitor)
+    # Save to the picture file
+    # mss.tools.to_png(sct_img.rgb, sct_img.size, output=output)
 
 
 def parse_arguments():
@@ -97,8 +95,8 @@ if __name__ == '__main__':
         data = yaml.safe_load(f)
 
     model = YOLO(model_ckpt_path)
-
+    image_detector = ImageDetector(classes_names=data["names"], model=model)
     if user_args.method == "screen":
-        test_live_on_screen(model, data["names"])
+        test_live_on_screen_with_multiple_monitors(image_detector)
     else:
         test_on_video(model, data["names"], user_args.video)
