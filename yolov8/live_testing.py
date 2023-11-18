@@ -11,7 +11,7 @@ import numpy as np
 from ultralytics import YOLO
 import argparse
 from numpy import ndarray
-
+from database_health_check import dataset_health_check
 from use_model import ImageDetector
 
 
@@ -55,12 +55,14 @@ def test_live_on_screen_with_multiple_monitors(image_detector: ImageDetector) ->
 
         # Grab the data
         while True:
+            start = time.time()
             screenshot = sct.grab(monitor)
             frame = np.array(screenshot)
             frame = cv2.cvtColor(frame, cv2.COLOR_RGBA2RGB)
 
             frame = image_detector.process_frame(frame)
             cv2.imshow('Processed Frame', frame)
+            print("Time per frame: ", time.time() - start)
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
     # output = "sct-mon{mon}_{top}x{left}_{width}x{height}.png".format(**monitor)
@@ -89,13 +91,20 @@ def parse_arguments():
 if __name__ == '__main__':
     user_args = parse_arguments()
     dataset_yaml_path = "datasets/data.yaml"
-    model_ckpt_path = 'runs/detect/train17/weights/best.pt'
+    model_ckpt_path = 'runs/detect/train18/weights/best.pt'
 
     with open(dataset_yaml_path, "r") as f:
         data = yaml.safe_load(f)
 
     model = YOLO(model_ckpt_path)
-    image_detector = ImageDetector(classes_names=data["names"], model=model)
+    number_of_occurrences = dataset_health_check("datasets/train")
+    print(number_of_occurrences)
+    whitelisted_classes = [index for index, item in enumerate(number_of_occurrences) if
+                           item < 60]
+    image_detector = ImageDetector(classes_names=data["names"], model=model,
+                                   whitelisted_classes=whitelisted_classes)
+    for name, number in zip(data["names"], number_of_occurrences):
+        print(name, ": ", number)
     if user_args.method == "screen":
         test_live_on_screen_with_multiple_monitors(image_detector)
     else:
