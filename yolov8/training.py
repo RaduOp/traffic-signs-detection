@@ -28,5 +28,5 @@ def start_training():
 
 
 if __name__ == '__main__':
-    download_dataset(4)
-    # start_training()
+    # download_dataset(7)
+    start_training()
