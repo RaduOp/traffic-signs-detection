@@ -3,21 +3,16 @@ import random
 import time
 
 import cv2
-import mss
-import yaml
-import numpy as np
-from ultralytics import YOLO
-import argparse
 from numpy import ndarray
-from label_transposing import *
+from yolov8.random_utils.label_transposing import *
+from random_utils.draw_on_image import *
 
 
-class ImageDetector:
-    def __init__(self, classes_names, model, whitelisted_classes, save_location="collected_images",
+class ProcessImage:
+    def __init__(self, classes_names, whitelisted_classes, save_location="collected_images",
                  crop_size=640, display_boxes=True, save_crops=False):
         self.crop_size = crop_size
         self.classes_names = classes_names
-        self.model = model
         self.original_frame = None
         self.frame_to_draw_on = None
         self.whitelisted_classes = whitelisted_classes
@@ -49,7 +44,7 @@ class ImageDetector:
                 break
         return index
 
-    def split_whitelisted_and_not_whitelisted(self, boxes):
+    def __split_whitelisted_and_not_whitelisted(self, boxes):
         whitelisted = []
         not_whitelisted = []
         index = 0
@@ -57,7 +52,7 @@ class ImageDetector:
             conf = detection.conf.item()
             if conf < 0.5:
                 continue
-            class_index = detection.cls.item()
+            class_index = int(detection.cls.item())
             x1, y1, x2, y2 = map(int, detection.xyxy.tolist()[0])
             box_data = {
                 "coords": [x1, y1, x2, y2],
@@ -70,37 +65,48 @@ class ImageDetector:
             else:
                 whitelisted.append(box_data)
             if self.display_boxes:
-                self.__display_rectangle_with_size(coords=[x1, y1, x2, y2], color=(0, 255, 0),
-                                                   class_index=class_index, conf=conf)
+                self.frame_to_draw_on = draw_custom_rectangle(self.frame_to_draw_on,
+                                                              coords=[x1, y1, x2, y2])
+                self.frame_to_draw_on = draw_rectangle_size(self.frame_to_draw_on,
+                                                            coords=[x1, y1, x2, y2])
+                self.frame_to_draw_on = (
+                    draw_rectangle_name(self.frame_to_draw_on, coords=[x1, y1, x2, y2],
+                                        class_name=self.classes_names[class_index], conf=conf))
             index += 1
         return whitelisted, not_whitelisted
 
-    def process_frame(self, frame: ndarray) -> ndarray:
+    def process_frame(self, frame: ndarray, results) -> ndarray:
         self.__set_current_frames(frame)
-        boxes = self.model.predict(frame, imgsz=self.original_frame.shape[1])[0].boxes
-        whitelisted, not_whitelisted = self.split_whitelisted_and_not_whitelisted(boxes)
+        # boxes = boxes[0].boxes.xyxy.tolist()
+        if not len(results) > 0:
+            return frame
+        whitelisted, not_whitelisted = self.__split_whitelisted_and_not_whitelisted(
+            results[0].boxes)
         if len(whitelisted) > 0:
-            groups_of_boxes = self.group_detections_for_cropping(whitelisted, not_whitelisted)
+            groups_of_boxes = self.__group_detections_for_cropping(whitelisted, not_whitelisted)
             for group in groups_of_boxes:
-                off_x1, off_y1, off_x2, off_y2 = self.get_crop_for_box(group[
-                                                                           "combined_coords"],
-                                                                       offset=True)
-                if self.display_boxes:
-                    self.__display_rectangle_with_size(group["combined_coords"], color=(255, 0, 0))
-                    self.__display_rectangle_with_size([off_x1, off_y1, off_x2,
-                                                        off_y2], color=(0, 0, 255))
+                off_x1, off_y1, off_x2, off_y2 = self.__get_crop_for_box(group[
+                                                                             "combined_coords"],
+                                                                         offset=True)
+
                 cropped_image = self.original_frame[off_y1:off_y2, off_x1:off_x2]
-                translated_detections = self.translate_detection_coordinates(group[
-                                                                                 "used_boxes"],
-                                                                             [off_x1, off_y1,
-                                                                              off_x2,
-                                                                              off_y2])
-                if time.time() - self.last_saved_picture_time > 1.5:
-                self.save_cropped_image_and_label(cropped_image, translated_detections)
+                translated_detections = self.__translate_detection_coordinates(group[
+                                                                                   "used_boxes"],
+                                                                               [off_x1, off_y1,
+                                                                                off_x2,
+                                                                                off_y2])
+                if time.time() - self.last_saved_picture_time > 1:
+                    self.save_cropped_image_and_label(cropped_image, translated_detections)
+                    if self.display_boxes:
+                        self.frame_to_draw_on = draw_custom_rectangle(self.frame_to_draw_on,
+                                                                      group["combined_coords"])
+                        self.frame_to_draw_on = draw_custom_rectangle(self.frame_to_draw_on,
+                                                                      [off_x1, off_y1, off_x2,
+                                                                       off_y2], color=(0, 0, 255))
             self.__update_last_saved_picture()
         return self.frame_to_draw_on
 
-    def get_crop_for_box(self, box_coordinates, offset=False):
+    def __get_crop_for_box(self, box_coordinates, offset=False):
         width = self.original_frame.shape[1]
         height = self.original_frame.shape[0]
         x1, y1, x2, y2 = map(int, box_coordinates)
@@ -134,7 +140,7 @@ class ImageDetector:
 
         return [x1_new, y1_new, x2_new, y2_new]
 
-    def translate_detection_coordinates(self, detection_boxes_coordinates, crop_coordinates):
+    def __translate_detection_coordinates(self, detection_boxes_coordinates, crop_coordinates):
         new_boxes = []
         box_x1, box_y1, box_x2, box_y2 = map(int, crop_coordinates)
         for box in detection_boxes_coordinates:
@@ -163,7 +169,7 @@ class ImageDetector:
         self.__increase_saved_picture_index()
 
     # TODO this needs a better implementation
-    def group_detections_for_cropping(self, whitelisted, not_whitelisted):
+    def __group_detections_for_cropping(self, whitelisted, not_whitelisted):
         used = []
         groups = []
 
@@ -211,25 +217,3 @@ class ImageDetector:
                     group["used_boxes"].append(box)
 
         return groups
-
-    def __display_rectangle_with_size(self, coords, color=(0, 0, 255), class_index=None, conf=None):
-        x1, y1, x2, y2 = map(int, coords)
-        cv2.putText(self.frame_to_draw_on, str(x2 - x1), (x1 + ((x2 - x1) // 2), y1 + 20),
-                    cv2.FONT_HERSHEY_SIMPLEX,
-                    0.5,
-                    (0, 255, 255), 2)
-        cv2.putText(self.frame_to_draw_on, str(y2 - y1), (x2 - 50, y1 + ((y2 - y1) // 2)),
-                    cv2.FONT_HERSHEY_SIMPLEX,
-                    0.5,
-                    (0, 255, 255), 2)
-        cv2.rectangle(self.frame_to_draw_on, (x1, y1), (x2, y2),
-                      color, 1)
-
-        if class_index is not None and conf is not None:
-            cv2.putText(self.frame_to_draw_on, f"{self.classes_names[int(class_index)]}, "
-                                               f"{round(conf, 2)}",
-                        (x1,
-                         y1 - 20),
-                        cv2.FONT_HERSHEY_SIMPLEX,
-                        0.5,
-                        (0, 255, 0), 2)
