@@ -9,11 +9,12 @@ import numpy as np
 from ultralytics import YOLO
 import argparse
 from numpy import ndarray
+from label_transposing import *
 
 
 class ImageDetector:
     def __init__(self, classes_names, model, whitelisted_classes, save_location="collected_images",
-                 crop_size=640, display_boxes=True):
+                 crop_size=640, display_boxes=True, save_crops=False):
         self.crop_size = crop_size
         self.classes_names = classes_names
         self.model = model
@@ -76,31 +77,27 @@ class ImageDetector:
 
     def process_frame(self, frame: ndarray) -> ndarray:
         self.__set_current_frames(frame)
-        self.model = self.model.to("cuda")
         boxes = self.model.predict(frame, imgsz=self.original_frame.shape[1])[0].boxes
-        boxes_info = []
-        index = 0
-        if len(boxes) > 0:
-            whitelisted, not_whitelisted = self.split_whitelisted_and_not_whitelisted(boxes)
-            if len(whitelisted) > 0:
-                groups_of_boxes = self.group_detections_for_cropping(whitelisted, not_whitelisted)
-                for group in groups_of_boxes:
-                    off_x1, off_y1, off_x2, off_y2 = self.get_crop_for_box(group[
-                                                                               "combined_coords"],
-                                                                           offset=True)
+        whitelisted, not_whitelisted = self.split_whitelisted_and_not_whitelisted(boxes)
+        if len(whitelisted) > 0:
+            groups_of_boxes = self.group_detections_for_cropping(whitelisted, not_whitelisted)
+            for group in groups_of_boxes:
+                off_x1, off_y1, off_x2, off_y2 = self.get_crop_for_box(group[
+                                                                           "combined_coords"],
+                                                                       offset=True)
+                if self.display_boxes:
                     self.__display_rectangle_with_size(group["combined_coords"], color=(255, 0, 0))
-                    # self.__display_rectangle_with_size([off_x1, off_y1, off_x2,
-                    #                                     off_y2], color=(0, 0, 255))
-                    cropped_image = self.original_frame[off_y1:off_y2, off_x1:off_x2]
-                    translated_detections = self.translate_detection_coordinates(group[
-                                                                                     "used_boxes"],
-                                                                                 [off_x1, off_y1,
-                                                                                  off_x2,
-                                                                                  off_y2])
-                    # time.sleep(2)
-                    # if time.time() - self.last_saved_picture_time > 1.5:
-                    # self.save_cropped_image_and_label(cropped_image, translated_detections)
-                self.__update_last_saved_picture()
+                    self.__display_rectangle_with_size([off_x1, off_y1, off_x2,
+                                                        off_y2], color=(0, 0, 255))
+                cropped_image = self.original_frame[off_y1:off_y2, off_x1:off_x2]
+                translated_detections = self.translate_detection_coordinates(group[
+                                                                                 "used_boxes"],
+                                                                             [off_x1, off_y1,
+                                                                              off_x2,
+                                                                              off_y2])
+                if time.time() - self.last_saved_picture_time > 1.5:
+                self.save_cropped_image_and_label(cropped_image, translated_detections)
+            self.__update_last_saved_picture()
         return self.frame_to_draw_on
 
     def get_crop_for_box(self, box_coordinates, offset=False):
@@ -160,7 +157,7 @@ class ImageDetector:
 
         with open(txt_path, 'a') as file:
             for detection in detections_coordinates:
-                x_center, y_center, width, height = self.convert_to_yolo_format(detection["coords"])
+                x_center, y_center, width, height = corner_values_to_yolo(detection["coords"])
                 file.write(f"{int(detection['class_index'])} {x_center} {y_center} {width}"
                            f" {height}\n")
         self.__increase_saved_picture_index()
@@ -214,21 +211,6 @@ class ImageDetector:
                     group["used_boxes"].append(box)
 
         return groups
-
-    def convert_to_yolo_format(self, coordinates):
-        x_min, y_min, x_max, y_max = coordinates
-        x_center = (x_min + x_max) / 2.0
-        y_center = (y_min + y_max) / 2.0
-        width = x_max - x_min
-        height = y_max - y_min
-
-        # Normalize coordinates
-        x_center /= self.crop_size
-        y_center /= self.crop_size
-        width /= self.crop_size
-        height /= self.crop_size
-
-        return x_center, y_center, width, height
 
     def __display_rectangle_with_size(self, coords, color=(0, 0, 255), class_index=None, conf=None):
         x1, y1, x2, y2 = map(int, coords)
