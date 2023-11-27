@@ -15,11 +15,20 @@ class YoloDetector:
     def __use_model_to_detect(self, frame: np.ndarray):
         return self.model.predict(frame, imgsz=self.image_size)
 
-    def __process_results(self, boxes):
-        pass
+    def get_class_names(self):
+        return self.model.names
 
     def get_raw_detection_results(self, frame: np.ndarray):
         return self.__use_model_to_detect(frame)
 
-    def get_bounding_boxes(self):
-        pass
+    def get_results_as_list(self, frame: np.ndarray):
+        results = self.__use_model_to_detect(frame)
+        results_list = []
+        for index, box in enumerate(results[0].boxes):
+            results_list.append({
+                "coords": box.xyxy.tolist()[0],
+                "conf": box.conf.item(),
+                "class_index": int(box.cls.item()),
+                "id": index
+            })
+        return results_list

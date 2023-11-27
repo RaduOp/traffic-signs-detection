@@ -1,5 +1,7 @@
 import os
 import shutil
+
+from torch.utils.tensorboard import SummaryWriter
 from ultralytics import YOLO
 import yaml
 import dotenv
@@ -30,20 +32,34 @@ def update_yaml_file(path_to_folder):
     # Update the specified field
     data["train"] = train_path
     data["val"] = valid_path
-    del data["test"]
+    if "test" in data.keys():
+        del data["test"]
 
     with open(path_to_folder + "/data.yaml", 'w') as file:
         yaml.dump(data, file)
 
 
 def start_training():
-    model = YOLO('pretrained_models/yolov8n.pt')
-    # model = model.to("cuda")
-    results = model.train(data='datasets/data.yaml', epochs=100, imgsz=640, cache="ram",
-                          workers=0, batch=-1, device=0, val=True)
+    model = YOLO('runs/detect/train12/weights/best.pt')
+
+    writer = SummaryWriter('logs')
+
+    # Set up the training configuration
+    config = {
+        'epochs': 20,
+        'imgsz': 640,
+        'cache': True,
+        'workers': 0,
+        'batch': -1,
+        'device': 0,
+        'val': True
+    }
+
+    results = model.train(data='datasets/data.yaml', **config)
+    # print(results)
 
 
 if __name__ == '__main__':
-    download_dataset(8)
+    download_dataset(9)
     update_yaml_file("datasets")
     start_training()

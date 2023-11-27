@@ -8,7 +8,7 @@ from typing import Union
 
 import cv2
 import numpy as np
-from label_transposing import check_coordinates_type
+from yolov8.random_utils.label_transposing import check_coordinates_type
 
 
 def draw_custom_rectangle(frame: np.ndarray, coords: list[Union[int, float]],
@@ -23,15 +23,14 @@ def draw_custom_rectangle(frame: np.ndarray, coords: list[Union[int, float]],
     :param thickness: border thickness
     :return: image with drawn rectangle
     """
-    x1, y1, x2, y2 = check_coordinates_type(coords)
+    x1, y1, x2, y2 = map(int, check_coordinates_type(coords))
 
-    cv2.rectangle(frame, (x1, y1), (x2, y2),
-                  color, thickness)
+    frame = cv2.rectangle(frame, (x1, y1), (x2, y2), color, thickness)
     return frame
 
 
-def draw_rectangle_size(frame: np.ndarray, coords: list[int], color: tuple[int] = (255, 0, 0),
-                        thickness: int = 1, font_scale: float = 0.5) -> np.ndarray:
+def draw_rectangle_size(frame: np.ndarray, coords: list[int], color: tuple[int] = (0, 0, 255),
+                        thickness: int = 2, font_scale: float = 0.5) -> np.ndarray:
     """
     Draw the sizes of the rectangle (in pixels). It uses the cv2.putText method to draw line
     sizes in pixels, does checks for coordinates and is customized (color, font, font_scale,
@@ -45,11 +44,11 @@ def draw_rectangle_size(frame: np.ndarray, coords: list[int], color: tuple[int] 
     :return: image with drawn rectangle sizes (you might want to draw the rectangle first)
     """
 
-    x1, y1, x2, y2 = check_coordinates_type(coords)
+    x1, y1, x2, y2 = map(int, check_coordinates_type(coords))
     frame = cv2.putText(frame, str(y2 - y1), (x2 - 50, y1 + ((y2 - y1) // 2)),
                         cv2.FONT_HERSHEY_SIMPLEX,
-                        0.5,
-                        color, 2)
+                        font_scale,
+                        color, thickness)
 
     frame = cv2.putText(frame, str(x2 - x1), (x1 + ((x2 - x1) // 2), y1 + 20),
                         cv2.FONT_HERSHEY_SIMPLEX,
@@ -60,7 +59,7 @@ def draw_rectangle_size(frame: np.ndarray, coords: list[int], color: tuple[int] 
 
 
 def draw_rectangle_name(frame: np.ndarray, coords: list[int], class_name: str, conf: float,
-                        color: tuple[int] = (255, 0, 0), thickness: int = 1,
+                        color: tuple[int] = (0, 255, 0), thickness: int = 2,
                         font_scale: float = 0.5) -> np.ndarray:
     """
     Write a name next to a rectangle. Very useful for class names, does checks for coordinates,
@@ -75,10 +74,10 @@ def draw_rectangle_name(frame: np.ndarray, coords: list[int], class_name: str, c
     :return: image with name drawn for the given rectangle (you might want to draw the rectangle
     first)
     """
-    x1, y1, x2, y2 = check_coordinates_type(coords)
+    x1, y1, x2, y2 = map(int, check_coordinates_type(coords))
     cv2.putText(frame, f"{class_name}, {round(conf, 2)}", (x1, y1 - 20),
-                cv2.FONT_HERSHEY_SIMPLEX,
-                font_scale=font_scale,
+                fontFace=cv2.FONT_HERSHEY_SIMPLEX,
+                fontScale=font_scale,
                 color=color,
                 thickness=thickness)
 
