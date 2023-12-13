@@ -24,7 +24,6 @@ def test_live_on_screen_with_multiple_monitors(image_detector: YoloDetector) -> 
     class_names = image_detector.get_class_names()
     while True:
 
-        start = time.time()
         screenshot = sct.grab(monitor)
         frame = np.array(screenshot)
         frame = cv2.cvtColor(frame, cv2.COLOR_RGBA2RGB)
@@ -38,7 +37,6 @@ def test_live_on_screen_with_multiple_monitors(image_detector: YoloDetector) -> 
                         "class_index"]], conf=box['conf'])
 
         cv2.imshow('Processed Frame', frame)
-        print("Time per frame: ", time.time() - start)
 
         key = cv2.waitKey(1) & 0xFF
         if key == ord('q'):
@@ -59,7 +57,7 @@ def parse_arguments():
 if __name__ == '__main__':
     user_args = parse_arguments()
     dataset_yaml_path = "datasets/data.yaml"
-    model_ckpt_path = 'runs/detect/train13/weights/last.pt'
+    model_ckpt_path = 'runs/detect/train17/weights/last.pt'
 
     image_detector = YoloDetector(model_ckpt_path, 1920)
 

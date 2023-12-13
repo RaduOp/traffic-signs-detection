@@ -1,12 +1,9 @@
 """
-
+Random image cropper
 """
-import os
 import random
 
-import cv2
 from numpy import ndarray
-from yolov8.random_utils.label_transposing import corner_values_to_yolo
 
 
 class ImageCropper:
@@ -33,7 +30,7 @@ class ImageCropper:
 
     def _split_whitelisted_and_not_whitelisted(self, boxes):
         """
-        Receives  list of detection boxes and splits them into whitelisted and not whitelisted
+        Receives a list of detection boxes and splits them into whitelisted and not whitelisted
         boxes for further grouping.
         """
         whitelisted = []

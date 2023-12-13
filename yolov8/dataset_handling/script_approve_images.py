@@ -12,24 +12,26 @@ import argparse
 import os
 
 import cv2
-from yolov8.random_utils.label_transposing import yolo_to_corner_values
+
+from yolov8.random_utils.draw_on_image import draw_custom_rectangle
 
 
-def check_collected_images(path_to_folder: str, delete_key: str):
+def check_collected_images(path_to_folder: str, delete_key: str, quit_key: str):
     for image_name in os.listdir(os.path.join(path_to_folder, "images")):
         current_picture = os.path.join(path_to_folder, "images", image_name)
-        current_label = os.path.join(path_to_folder, "images", image_name[:-4] + ".txt")
+        current_label = os.path.join(path_to_folder, "labels", image_name[:-4] + ".txt")
 
         image = cv2.imread(current_picture)
 
         with open(current_label, 'r') as label_file:
             for line in label_file:
                 label = [float(el) for el in line.strip().split(" ")]
-                x1, y1, x2, y2 = map(int, yolo_to_corner_values(label[1:]))
-                image = cv2.rectangle(image, (x1, y1), (x2, y2), (0, 255, 0), 1)
+                image = draw_custom_rectangle(image, label[1:])
 
         cv2.imshow("img", image)
         key = cv2.waitKey(0)
+        if key == ord(quit_key):
+            break
         if key == ord(delete_key):
             if os.path.exists(current_label) and os.path.exists(current_picture):
                 os.remove(current_picture)
@@ -41,6 +43,7 @@ def check_collected_images(path_to_folder: str, delete_key: str):
 
         else:
             print("Image approved: ", image_name)
+    cv2.destroyAllWindows()
 
 
 def parse_arguments():
@@ -52,6 +55,13 @@ def parse_arguments():
         required=False,
         type=str,
         default="d",
+        help="Change the default delete key 'd'."
+    )
+    parser.add_argument(
+        "--quit_key",
+        required=False,
+        type=str,
+        default="q",
         help="Change the default delete key 'd'."
     )
     parser.add_argument(
@@ -67,4 +77,4 @@ def parse_arguments():
 
 if __name__ == "__main__":
     user_args = parse_arguments()
-    check_collected_images(user_args.location, user_args.delete_key)
+    check_collected_images(user_args.location, user_args.delete_key, user_args.quit_key)

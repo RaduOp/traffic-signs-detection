@@ -5,28 +5,26 @@ from torch.utils.tensorboard import SummaryWriter
 from ultralytics import YOLO
 import yaml
 import dotenv
+from roboflow import Roboflow
+from roboflow_shortcuts import download_dataset
 
 dotenv.load_dotenv(dotenv.find_dotenv())
 
 
-def download_dataset(dataset_version):
-    if os.path.isdir("datasets"):
-        shutil.rmtree("datasets")
-        os.mkdir("datasets")
+def manage_download(dataset_version: int, download_path: str):
+    if os.path.isdir(download_path):
+        shutil.rmtree(download_path)
+        os.makedirs(download_path)
     else:
-        os.mkdir("datasets")
-    from roboflow import Roboflow
+        os.makedirs(download_path)
 
-    rf = Roboflow(api_key=os.getenv("ROBOFLOW_API_KEY"))
-    project = rf.workspace(os.getenv("ROBOFLOW_WORKSPACE")).project(os.getenv("ROBOFLOW_PROJECT"))
-    dataset = project.version(dataset_version).download(os.getenv(
-        "ROBOFLOW_FORMAT"), location="datasets")
+    download_dataset(dataset_version, download_path)
 
 
-def update_yaml_file(path_to_folder):
+def update_yaml_file(path_to_dataset):
     train_path = os.path.join("train")
     valid_path = os.path.join("valid")
-    with open(path_to_folder + "/data.yaml", 'r') as file:
+    with open(path_to_dataset + "/data.yaml", 'r') as file:
         data: dict = yaml.safe_load(file)
 
     # Update the specified field
@@ -35,14 +33,12 @@ def update_yaml_file(path_to_folder):
     if "test" in data.keys():
         del data["test"]
 
-    with open(path_to_folder + "/data.yaml", 'w') as file:
+    with open(path_to_dataset + "/data.yaml", 'w') as file:
         yaml.dump(data, file)
 
 
-def start_training():
-    model = YOLO('runs/detect/train12/weights/best.pt')
-
-    writer = SummaryWriter('logs')
+def start_training(path_to_dataset: str, pretrained_model_path: str):
+    model = YOLO(pretrained_model_path)
 
     # Set up the training configuration
     config = {
@@ -52,14 +48,17 @@ def start_training():
         'workers': 0,
         'batch': -1,
         'device': 0,
-        'val': True
+        'val': True,
+        'data': os.path.join(path_to_dataset, "data.yaml"),
     }
 
-    results = model.train(data='datasets/data.yaml', **config)
-    # print(results)
+    model.train(**config)
 
 
 if __name__ == '__main__':
-    download_dataset(9)
-    update_yaml_file("datasets")
-    start_training()
+    path_to_dataset = "datasets/original_dataset"
+    pretrained_model_path = "runs/detect/train16/weights/best.pt"
+
+    manage_download(10, download_path=path_to_dataset)
+    update_yaml_file(path_to_dataset)
+    start_training(path_to_dataset, pretrained_model_path)
