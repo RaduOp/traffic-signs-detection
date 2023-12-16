@@ -19,12 +19,15 @@ def check_coordinates_type(coords: list[Union[int, float]]) -> list[int]:
     return coords
 
 
-def yolo_to_corner_values(coordinates: list[Union[int, float]], image_height: int = 640,
-                          image_width: int = 640) -> list[int]:
+def yolo_to_corner_values(
+    coordinates: list[Union[int, float]],
+    image_height: int = 640,
+    image_width: int = 640,
+) -> list[int]:
     """
     A method that transforms yolo format coordinates into min corner max corner coordinates.
 
-    :param coordinates: a list of coordinates in yolo format
+    :param coordinates: A list of coordinates in yolo format
     :param image_height: 640 by default but can be changed
     :param image_width: 640 by default but can be changed
     :return: coordinates in min corner max corner format (coords are cast to int for ease of use)
@@ -39,8 +42,11 @@ def yolo_to_corner_values(coordinates: list[Union[int, float]], image_height: in
     return [x_min, y_min, x_max, y_max]
 
 
-def corner_values_to_yolo(coordinates: list[Union[int, float]], image_height: int = 640,
-                          image_width: int = 640) -> list[float]:
+def corner_values_to_yolo(
+    coordinates: list[Union[int, float]],
+    image_height: int = 640,
+    image_width: int = 640,
+) -> list[float]:
     """
     A method that transforms min corner max corner coordinates to yolo format.
 

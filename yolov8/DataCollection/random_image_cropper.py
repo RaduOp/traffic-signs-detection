@@ -46,7 +46,9 @@ class ImageCropper:
 
         return whitelisted, not_whitelisted
 
-    def get_crops(self, frame: ndarray, boxes: list[dict]) -> list[tuple[ndarray, dict]] or list:
+    def get_crops(
+        self, frame: ndarray, boxes: list[dict]
+    ) -> list[tuple[ndarray, dict]] or list:
         """
         This method accepts an image and a list of boxes and crops one or more images based on
         the detections.
@@ -65,14 +67,20 @@ class ImageCropper:
         self._set_original_frame(frame)
 
         # Whitelisting
-        whitelisted, not_whitelisted = self._split_whitelisted_and_not_whitelisted(boxes)
+        whitelisted, not_whitelisted = self._split_whitelisted_and_not_whitelisted(
+            boxes
+        )
         if not len(whitelisted) > 0:
             return final_crops
 
         # Cropping
-        groups_of_boxes = self._group_detections_for_cropping(whitelisted, not_whitelisted)
+        groups_of_boxes = self._group_detections_for_cropping(
+            whitelisted, not_whitelisted
+        )
         for group in groups_of_boxes:
-            off_x1, off_y1, off_x2, off_y2 = self._get_crop_for_box(group["combined_coords"])
+            off_x1, off_y1, off_x2, off_y2 = self._get_crop_for_box(
+                group["combined_coords"]
+            )
             cropped_image = self.original_frame[off_y1:off_y2, off_x1:off_x2]
 
             translated_detections = self._detection_coords_to_crop_coords(
@@ -93,8 +101,12 @@ class ImageCropper:
         x1, y1, x2, y2 = map(int, box_coordinates)
         max_x1_offset_point = x2 - self.crop_size if x2 - self.crop_size >= 0 else 0
         max_y1_offset_point = y2 - self.crop_size if y2 - self.crop_size >= 0 else 0
-        max_x2_offset_point = x1 + self.crop_size if x1 + self.crop_size <= width else width
-        max_y2_offset_point = y1 + self.crop_size if y1 + self.crop_size <= height else height
+        max_x2_offset_point = (
+            x1 + self.crop_size if x1 + self.crop_size <= width else width
+        )
+        max_y2_offset_point = (
+            y1 + self.crop_size if y1 + self.crop_size <= height else height
+        )
 
         # TODO: make sure the crop doesn't exceed image edges in a better way
         while True:
@@ -118,7 +130,7 @@ class ImageCropper:
 
     @staticmethod
     def _detection_coords_to_crop_coords(detection_boxes_coordinates, crop_coordinates):
-        """Adjust the original coordinates from the bigger image to the cropped image. """
+        """Adjust the original coordinates from the bigger image to the cropped image."""
         new_boxes = []
         box_x1, box_y1, box_x2, box_y2 = map(int, crop_coordinates)
         for box in detection_boxes_coordinates:
@@ -149,7 +161,7 @@ class ImageCropper:
             used_whitelisted.append(first_box["id"])
             current_group = {
                 "used_boxes": [first_box],
-                "combined_coords": first_box["coords"]
+                "combined_coords": first_box["coords"],
             }
             for second_box in whitelisted:
                 if second_box["id"] == first_box["id"]:
@@ -158,7 +170,10 @@ class ImageCropper:
                     current_group["combined_coords"], second_box["coords"]
                 )
 
-                if max_x2 - max_x1 <= self.crop_size and max_y2 - max_y1 <= self.crop_size:
+                if (
+                    max_x2 - max_x1 <= self.crop_size
+                    and max_y2 - max_y1 <= self.crop_size
+                ):
                     current_group["used_boxes"].append(second_box)
                     current_group["combined_coords"] = [max_x1, max_y1, max_x2, max_y2]
                     used_whitelisted.append(second_box["id"])
@@ -169,10 +184,13 @@ class ImageCropper:
         # Step 2: Add any not whitelisted signs to the created groups if possible.
         for box in not_whitelisted:
             for group in groups:
-                max_x1, max_y1, max_x2, max_y2 = self._combine_two_boxes(box["coords"],
-                                                                         group[
-                                                                             "combined_coords"])
-                if max_x2 - max_x1 <= self.crop_size and max_y2 - max_y1 <= self.crop_size:
+                max_x1, max_y1, max_x2, max_y2 = self._combine_two_boxes(
+                    box["coords"], group["combined_coords"]
+                )
+                if (
+                    max_x2 - max_x1 <= self.crop_size
+                    and max_y2 - max_y1 <= self.crop_size
+                ):
                     group["combined_coords"] = [max_x1, max_y1, max_x2, max_y2]
                     group["used_boxes"].append(box)
 
@@ -184,7 +202,9 @@ class ImageCropper:
         firs_x1, first_y1, first_x2, first_y2 = first_box_coords
         second_x1, second_y1, second_x2, second_y2 = second_box_coords
         max_x1, max_y1, max_x2, max_y2 = (
-            int(min(firs_x1, second_x1)), int(min(first_y1, second_y1)),
-            int(max(first_x2, second_x2)), int(max(first_y2, second_y2))
+            int(min(firs_x1, second_x1)),
+            int(min(first_y1, second_y1)),
+            int(max(first_x2, second_x2)),
+            int(max(first_y2, second_y2)),
         )
         return max_x1, max_y1, max_x2, max_y2
