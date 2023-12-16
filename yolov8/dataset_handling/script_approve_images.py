@@ -23,7 +23,7 @@ def check_collected_images(path_to_folder: str, delete_key: str, quit_key: str):
 
         image = cv2.imread(current_picture)
 
-        with open(current_label, 'r') as label_file:
+        with open(current_label, "r") as label_file:
             for line in label_file:
                 label = [float(el) for el in line.strip().split(" ")]
                 image = draw_custom_rectangle(image, label[1:])
@@ -36,10 +36,15 @@ def check_collected_images(path_to_folder: str, delete_key: str, quit_key: str):
             if os.path.exists(current_label) and os.path.exists(current_picture):
                 os.remove(current_picture)
                 os.remove(current_label)
-                print(f"Image and label deleted: ", image_name, image_name[:-4] + ".txt")
+                print(
+                    f"Image and label deleted: ", image_name, image_name[:-4] + ".txt"
+                )
             else:
-                print(f"Delete failed, label or image is missing: ", image_name, image_name[:-4] +
-                      ".txt")
+                print(
+                    f"Delete failed, label or image is missing: ",
+                    image_name,
+                    image_name[:-4] + ".txt",
+                )
 
         else:
             print("Image approved: ", image_name)
@@ -47,29 +52,30 @@ def check_collected_images(path_to_folder: str, delete_key: str, quit_key: str):
 
 
 def parse_arguments():
-    parser = argparse.ArgumentParser(description="A script that allows you to quickly iterate "
-                                                 "trough a bunch of images with labels and decide "
-                                                 "which ones you want to keep.")
+    parser = argparse.ArgumentParser(
+        description="A script that allows you to quickly iterate "
+        "trough a bunch of images with labels and decide "
+        "which ones you want to keep."
+    )
     parser.add_argument(
         "--delete_key",
         required=False,
         type=str,
         default="d",
-        help="Change the default delete key 'd'."
+        help="Change the default delete key 'd'.",
     )
     parser.add_argument(
         "--quit_key",
         required=False,
         type=str,
         default="q",
-        help="Change the default delete key 'd'."
+        help="Change the default delete key 'd'.",
     )
     parser.add_argument(
         "--location",
         type=str,
         required=True,
         help="Path to folder with images and labels.",
-
     )
 
     return parser.parse_args()

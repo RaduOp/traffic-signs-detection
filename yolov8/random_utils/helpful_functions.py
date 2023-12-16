@@ -14,4 +14,4 @@ def read_class_names_from_yaml(path_to_yaml_file: str) -> list[str]:
     :return: a list of class names
     """
     with open(path_to_yaml_file, "r") as f:
-        return yaml.safe_load(f)['names']
+        return yaml.safe_load(f)["names"]

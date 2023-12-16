@@ -3,7 +3,6 @@ from ultralytics import YOLO
 
 
 class YoloDetector:
-
     def __init__(self, path_to_model: str, image_size: int):
         self.image_size = image_size
         self.path_to_model = path_to_model
@@ -25,10 +24,12 @@ class YoloDetector:
         results = self._use_model_to_detect(frame)
         results_list = []
         for index, box in enumerate(results[0].boxes):
-            results_list.append({
-                "coords": box.xyxy.tolist()[0],
-                "conf": box.conf.item(),
-                "class_index": int(box.cls.item()),
-                "id": index
-            })
+            results_list.append(
+                {
+                    "coords": box.xyxy.tolist()[0],
+                    "conf": box.conf.item(),
+                    "class_index": int(box.cls.item()),
+                    "id": index,
+                }
+            )
         return results_list

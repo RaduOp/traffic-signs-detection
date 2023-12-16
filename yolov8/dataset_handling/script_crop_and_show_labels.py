@@ -23,7 +23,9 @@ from yolov8.random_utils.helpful_functions import read_class_names_from_yaml
 from yolov8.random_utils.label_transposing import yolo_to_corner_values
 
 
-def display_multiple_pictures(img_list: list[np.ndarray], image_names: list[str], class_name: str):
+def display_multiple_pictures(
+    img_list: list[np.ndarray], image_names: list[str], class_name: str
+):
     max_height = max(img.shape[0] for img in img_list)
     max_width = sum(img.shape[1] for img in img_list)
 
@@ -32,7 +34,7 @@ def display_multiple_pictures(img_list: list[np.ndarray], image_names: list[str]
     current_width = 0
     for img in img_list:
         h, w = img.shape[:2]
-        canvas[:h, current_width:current_width + w] = img
+        canvas[:h, current_width : current_width + w] = img
         current_width += w
 
     cv2.imshow(class_name, canvas)
@@ -53,8 +55,9 @@ def display_multiple_pictures(img_list: list[np.ndarray], image_names: list[str]
     cv2.destroyAllWindows()
 
 
-def check_labels_from_dataset(path_to_folder: str, path_to_data_file, display_number: int = 100) -> \
-        None:
+def check_labels_from_dataset(
+    path_to_folder: str, path_to_data_file, display_number: int = 100
+) -> None:
     class_names = read_class_names_from_yaml(path_to_data_file)
 
     for index in range(len(class_names)):
@@ -63,9 +66,11 @@ def check_labels_from_dataset(path_to_folder: str, path_to_data_file, display_nu
 
         for image_name in os.listdir(os.path.join(path_to_folder, "images")):
             current_image = os.path.join(path_to_folder, "images", image_name)
-            current_label = os.path.join(path_to_folder, "labels", image_name[:-4] + ".txt")
+            current_label = os.path.join(
+                path_to_folder, "labels", image_name[:-4] + ".txt"
+            )
 
-            with open(current_label, 'r') as label_file:
+            with open(current_label, "r") as label_file:
                 for line in label_file:
                     label = [float(el) for el in line.strip().split(" ")]
                     if int(label[0]) == index:
@@ -75,33 +80,38 @@ def check_labels_from_dataset(path_to_folder: str, path_to_data_file, display_nu
                         current_pictures_names.append(image_name)
 
             if len(current_pictures) >= display_number:
-                display_multiple_pictures(current_pictures, current_pictures_names,
-                                          class_name=class_names[index])
+                display_multiple_pictures(
+                    current_pictures,
+                    current_pictures_names,
+                    class_name=class_names[index],
+                )
                 current_pictures = []
                 current_pictures_names = []
 
         if len(current_pictures) > 0:
-            display_multiple_pictures(current_pictures, current_pictures_names,
-                                      class_name=class_names[index])
+            display_multiple_pictures(
+                current_pictures, current_pictures_names, class_name=class_names[index]
+            )
 
 
 def parse_arguments():
-    parser = argparse.ArgumentParser(description="A script that allows you to crop labels from "
-                                                 "images and display them a few at time to check "
-                                                 "for mislabeled objects.")
+    parser = argparse.ArgumentParser(
+        description="A script that allows you to crop labels from "
+        "images and display them a few at time to check "
+        "for mislabeled objects."
+    )
     parser.add_argument(
         "--display_number",
         required=False,
         type=int,
         default=5,
-        help="Change the amount of pictures to be displayed at once."
+        help="Change the amount of pictures to be displayed at once.",
     )
     parser.add_argument(
         "--location",
         type=str,
         required=True,
         help="Path to folder with images and labels.",
-
     )
 
     parser.add_argument(
@@ -116,7 +126,11 @@ def parse_arguments():
 
 if __name__ == "__main__":
     user_args = parse_arguments()
-    print("Info:\nPress 'w' for next batch.\n"
-          "Press 'm' to close.\n"
-          "Press '1' to '0' to copy image name to clipboard.\n")
-    check_labels_from_dataset(user_args.location, user_args.data_file, user_args.display_number)
+    print(
+        "Info:\nPress 'w' for next batch.\n"
+        "Press 'm' to close.\n"
+        "Press '1' to '0' to copy image name to clipboard.\n"
+    )
+    check_labels_from_dataset(
+        user_args.location, user_args.data_file, user_args.display_number
+    )

@@ -24,7 +24,7 @@ def manage_download(dataset_version: int, download_path: str):
 def update_yaml_file(path_to_dataset):
     train_path = os.path.join("train")
     valid_path = os.path.join("valid")
-    with open(path_to_dataset + "/data.yaml", 'r') as file:
+    with open(path_to_dataset + "/data.yaml", "r") as file:
         data: dict = yaml.safe_load(file)
 
     # Update the specified field
@@ -33,7 +33,7 @@ def update_yaml_file(path_to_dataset):
     if "test" in data.keys():
         del data["test"]
 
-    with open(path_to_dataset + "/data.yaml", 'w') as file:
+    with open(path_to_dataset + "/data.yaml", "w") as file:
         yaml.dump(data, file)
 
 
@@ -42,20 +42,20 @@ def start_training(path_to_dataset: str, pretrained_model_path: str):
 
     # Set up the training configuration
     config = {
-        'epochs': 20,
-        'imgsz': 640,
-        'cache': True,
-        'workers': 0,
-        'batch': -1,
-        'device': 0,
-        'val': True,
-        'data': os.path.join(path_to_dataset, "data.yaml"),
+        "epochs": 20,
+        "imgsz": 640,
+        "cache": True,
+        "workers": 0,
+        "batch": -1,
+        "device": 0,
+        "val": True,
+        "data": os.path.join(path_to_dataset, "data.yaml"),
     }
 
     model.train(**config)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     path_to_dataset = "datasets/original_dataset"
     pretrained_model_path = "runs/detect/train16/weights/best.pt"
 
