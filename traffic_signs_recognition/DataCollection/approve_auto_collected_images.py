@@ -13,7 +13,7 @@ import os
 
 import cv2
 
-from yolov8.random_utils.draw_on_image import draw_custom_rectangle
+from traffic_signs_recognition.random_utils.draw_on_image import draw_custom_rectangle
 
 
 def check_collected_images(path_to_folder: str, delete_key: str, quit_key: str):
@@ -51,36 +51,8 @@ def check_collected_images(path_to_folder: str, delete_key: str, quit_key: str):
     cv2.destroyAllWindows()
 
 
-def parse_arguments():
-    parser = argparse.ArgumentParser(
-        description="A script that allows you to quickly iterate "
-        "trough a bunch of images with labels and decide "
-        "which ones you want to keep."
-    )
-    parser.add_argument(
-        "--delete_key",
-        required=False,
-        type=str,
-        default="d",
-        help="Change the default delete key 'd'.",
-    )
-    parser.add_argument(
-        "--quit_key",
-        required=False,
-        type=str,
-        default="q",
-        help="Change the default delete key 'd'.",
-    )
-    parser.add_argument(
-        "--location",
-        type=str,
-        required=True,
-        help="Path to folder with images and labels.",
-    )
-
-    return parser.parse_args()
-
-
 if __name__ == "__main__":
-    user_args = parse_arguments()
-    check_collected_images(user_args.location, user_args.delete_key, user_args.quit_key)
+    delete_key = "d"
+    quit_key = "q"
+    location = "../collected_images/run_1"
+    check_collected_images(location, delete_key, quit_key)

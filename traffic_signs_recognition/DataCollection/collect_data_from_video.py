@@ -3,12 +3,19 @@ Collect data from a video using the model and the image cropper.
 """
 import os.path
 
-from yolov8.dataset_handling.dataset_stats import overall_healthcheck
-from yolov8.DataCollection.random_image_cropper import ImageCropper
-from yolov8.detectors import YoloDetector
-from yolov8.DataCollection.save_crops import save_one
-from yolov8.random_utils.draw_on_image import *
-from yolov8.random_utils.helpful_functions import read_class_names_from_yaml
+import cv2
+
+from .random_image_cropper import ImageCropper
+from traffic_signs_recognition.YOLOV8.detectors import YoloDetector
+from .save_crops import save_one
+
+from traffic_signs_recognition.DatasetFunctionalities import overall_healthcheck
+from traffic_signs_recognition.random_utils import (
+    read_class_names_from_yaml,
+    draw_on_image,
+    draw_custom_rectangle,
+    draw_rectangle_name,
+)
 
 
 def process_video(

@@ -1,13 +1,15 @@
 """
 This file is meant for live testing of the trained model.
 """
-import time
-
+import cv2
+import numpy as np
 from mss import mss
 import argparse
-from yolov8.detectors import YoloDetector
-from yolov8.random_utils.helpful_functions import read_class_names_from_yaml
-from yolov8.random_utils.draw_on_image import *
+from traffic_signs_recognition.YOLOV8.detectors import YoloDetector
+from traffic_signs_recognition.random_utils import (
+    draw_custom_rectangle,
+    draw_rectangle_name,
+)
 
 
 def test_live_on_screen_with_multiple_monitors(image_detector: YoloDetector) -> None:
@@ -62,7 +64,7 @@ def parse_arguments():
 if __name__ == "__main__":
     user_args = parse_arguments()
     dataset_yaml_path = "datasets/data.yaml"
-    model_ckpt_path = "runs/detect/train17/weights/last.pt"
+    model_ckpt_path = "../runs/detect/train17/weights/last.pt"
 
     image_detector = YoloDetector(model_ckpt_path, 1920)
 

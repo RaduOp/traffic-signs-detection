@@ -26,7 +26,9 @@ def download_dataset(dataset_version: int, download_path: str) -> None:
 
 
 def deploy_model(
-    dataset_version: int, checkpoint_path: str, model_type: str = "yolov8"
+    dataset_version: int,
+    checkpoint_path: str,
+    model_type: str = "traffic_signs_recognition",
 ) -> None:
     """Deploy a model to Roboflow."""
     project = setup_roboflow_project()

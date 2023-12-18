@@ -3,7 +3,7 @@ import os
 import cv2
 import numpy as np
 
-from yolov8.random_utils.label_transposing import corner_values_to_yolo
+from traffic_signs_recognition.random_utils import corner_values_to_yolo
 
 
 def save_one(

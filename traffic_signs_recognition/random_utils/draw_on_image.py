@@ -8,7 +8,7 @@ from typing import Union
 
 import cv2
 import numpy as np
-from yolov8.random_utils.label_transposing import check_coordinates_type
+from .label_transposing import check_coordinates_type
 
 
 def draw_custom_rectangle(
