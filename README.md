@@ -22,11 +22,16 @@
 ***
 <div align="center">
 <h1>Traffic signs recognition</h1>
-<p>Hello, this is my personal project for traffic sign recognition. The goal of the 
-project was to train a model that was capable to recognize classes of signs (mandatory, forbidden,
-priority etc.) or even better, specific signs like the ones from the banner image.</p>
-<p>The dataset was created by me, every image was also collected and annotated by me.</p>
-<p></p>
+<p >Hello, this is my personal project for traffic sign recognition. "Self-driving 
+cars" has 
+been a 
+hot topic for a lot of years. With the rise in popularity of electric vehicles we're starting to 
+see more and more autonomous (or smart?) features ranging from self-parking, lane assist to 
+fully autonomous driving, like the Tesla Pilot.
+</p>
+<p>Recognizing traffic signs, it's essential for autonomous driving, at least for now. With this 
+project I tried to train a model that can recognize most common traffic signs, or groups of 
+traffic signs. </p>
 </div>
 
 
@@ -50,6 +55,16 @@ but this was a solid base that would eventually allow me to build upon.
 <!-- Dataset -->
 <div align="left">
 <h1 align="center">Dataset</h1>
+<p>There are a lot of free datasets for this particular task but there are some recurring issues 
+with them.</p>
+<ul>
+<li>Isolated images: most datasets contain images with one traffic sign per image. This does 
+not reflect reality.</li>
+<li>No bounding boxes: some datasets had thousands of images, but they were meant for image 
+classifications. This would require a lot of work to label the images.</li>
+<li>Small images: </li>
+</ul>
+
 <p>Collecting data is not a hard task, you can find images and videos all over the internet. My 
 very first thought, apart from actually going outside and taking pictures myself, was to go on 
 youtube. There are millions of videos with people driving around different places. I was 

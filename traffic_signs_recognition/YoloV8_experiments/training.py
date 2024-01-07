@@ -1,12 +1,10 @@
 import os
 import shutil
 
-from torch.utils.tensorboard import SummaryWriter
 from ultralytics import YOLO
 import yaml
 import dotenv
-from roboflow import Roboflow
-from roboflow_shortcuts import download_dataset
+from traffic_signs_recognition.random_utils.roboflow_shortcuts import download_dataset
 
 dotenv.load_dotenv(dotenv.find_dotenv())
 
@@ -39,7 +37,6 @@ def update_yaml_file(path_to_dataset):
 
 def start_training(path_to_dataset: str, pretrained_model_path: str):
     model = YOLO(pretrained_model_path)
-
     # Set up the training configuration
     config = {
         "epochs": 20,
@@ -56,7 +53,7 @@ def start_training(path_to_dataset: str, pretrained_model_path: str):
 
 
 if __name__ == "__main__":
-    path_to_dataset = "datasets/original_dataset"
+    path_to_dataset = "../datasets/original_dataset"
     pretrained_model_path = "runs/detect/train16/weights/best.pt"
 
     manage_download(10, download_path=path_to_dataset)

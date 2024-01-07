@@ -3,7 +3,7 @@ from collections import Counter, OrderedDict
 
 from matplotlib import pyplot as plt
 
-from yolov8.random_utils.helpful_functions import read_class_names_from_yaml
+from traffic_signs_recognition.random_utils import read_class_names_from_yaml
 import cv2
 import pandas as pd
 
