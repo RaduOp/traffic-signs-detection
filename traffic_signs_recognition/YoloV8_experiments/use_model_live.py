@@ -64,7 +64,7 @@ def parse_arguments():
 if __name__ == "__main__":
     user_args = parse_arguments()
     dataset_yaml_path = "datasets/data.yaml"
-    model_ckpt_path = "../runs/detect/train17/weights/last.pt"
+    model_ckpt_path = "runs/detect/train17/weights/last.pt"
 
     image_detector = YoloDetector(model_ckpt_path, 1920)
 

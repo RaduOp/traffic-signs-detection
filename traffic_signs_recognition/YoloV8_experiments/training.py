@@ -54,7 +54,7 @@ def start_training(path_to_dataset: str, pretrained_model_path: str):
 
 if __name__ == "__main__":
     path_to_dataset = "../datasets/original_dataset"
-    pretrained_model_path = "../runs/detect/train16/weights/best.pt"
+    pretrained_model_path = "runs/detect/train16/weights/best.pt"
 
     manage_download(10, download_path=path_to_dataset)
     update_yaml_file(path_to_dataset)
