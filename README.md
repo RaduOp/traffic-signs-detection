@@ -13,6 +13,9 @@
     <img src="https://github.com/devicons/devicon/blob/master/icons/pytorch/pytorch-original.svg" alt="PyTorch" width="75" height="75"/>
     <img src="" alt="YOLO"/>
     <img src="" alt="OpenCV"/>
+    <a href="https://universe.roboflow.com/radu-oprea-r4xnm/traffic-signs-hyipi">
+    <img src="https://app.roboflow.com/images/download-dataset-badge.svg"></img>
+</a>
  </div>
 
 <!-- Project description -->
