@@ -10,8 +10,8 @@
 
 <!-- Technologies used, right under banner -->
 <div align="center">
-    <img src="https://github.com/devicons/devicon/blob/master/icons/pytorch/pytorch-original.svg" alt="PyTorch" width="75" height="75"/>
-    <img src="" alt="YOLO"/>
+    <img src="https://github.com/devicons/devicon/blob/master/icons/pytorch/pytorch-original.svg" alt="PyTorch" width="50" height="50"/>
+    <img src="https://github.com/devicons/devicon/blob/master/icons/opencv/opencv-original.svg" alt="YOLO" width="50" height="50"/>
     <img src="" alt="OpenCV"/>
     <a href="https://universe.roboflow.com/radu-oprea-r4xnm/traffic-signs-hyipi">
     <img src="https://app.roboflow.com/images/download-dataset-badge.svg"></img>
