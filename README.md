@@ -13,9 +13,6 @@
     <img src="https://github.com/devicons/devicon/blob/master/icons/pytorch/pytorch-original.svg" alt="PyTorch" width="50" height="50"/>
     <img src="https://github.com/devicons/devicon/blob/master/icons/opencv/opencv-original.svg" alt="OpenCV" width="50" height="50"/>
     <img src="readme_assets/yolo_logo.png" width="75" height="50" alt="YOLO"/>
-    <a href="https://universe.roboflow.com/radu-oprea-r4xnm/traffic-signs-hyipi">
-    <img src="https://app.roboflow.com/images/download-dataset-badge.svg"></img>
-</a>
  </div>
 
 <!-- Project description -->
@@ -55,6 +52,9 @@ but this was a solid base that would eventually allow me to build upon.
 <!-- Dataset -->
 <div align="left">
 <h1 align="center">Dataset</h1>
+<a href="https://universe.roboflow.com/radu-oprea-r4xnm/traffic-signs-hyipi">
+  <img src="https://app.roboflow.com/images/download-dataset-badge.svg"></img>
+</a>
 <p>There are a lot of free datasets for this particular task but there are some recurring issues 
 with them.</p>
 <ul>
@@ -88,14 +88,8 @@ download a 4k 60fps video and render it to 1080p 60fps the results are better th
 </p>
 
 <p>The dataset is now saved on RoboFlow, a pretty cool website, which was used for labeling. You 
-can check a lot of stats about the dataset: classes, image size, splits, versions etc. Check the 
-DOWNLOAD link below.
+can check a lot of stats about the dataset: classes, image size, splits, versions etc.
 </p>
-
-```link
-https://universe.roboflow.com/radu-oprea-r4xnm/traffic-signs-hyipi
-```
-
 <p>The dataset is pretty skewed at the moment. Naturally some signs appear more than 
 others. This can be bad but also leaves room for a lot of experiments.</p>
 
