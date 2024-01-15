@@ -9,7 +9,7 @@
 
 
 <!-- Technologies used, right under banner -->
-<div align="center"
+<div align="center">
     <img src="https://github.com/devicons/devicon/blob/master/icons/pytorch/pytorch-original.svg" alt="PyTorch" width="50" height="50"/>
     <img src="https://github.com/devicons/devicon/blob/master/icons/opencv/opencv-original.svg" alt="OpenCV" width="50" height="50"/>
     <img src="readme_assets/yolo_logo.png" width="75" height="50" alt="YOLO"/>
