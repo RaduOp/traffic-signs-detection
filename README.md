@@ -9,10 +9,10 @@
 
 
 <!-- Technologies used, right under banner -->
-<div align="center">
-    <img src="https://github.com/devicons/devicon/blob/master/icons/pytorch/pytorch-original.svg" alt="PyTorch" width="75" height="75"/>
-    <img src="" alt="YOLO"/>
-    <img src=""/>
+<div align="center"
+    <img src="https://github.com/devicons/devicon/blob/master/icons/pytorch/pytorch-original.svg" alt="PyTorch" width="50" height="50"/>
+    <img src="https://github.com/devicons/devicon/blob/master/icons/opencv/opencv-original.svg" alt="OpenCV" width="50" height="50"/>
+    <img src="readme_assets/yolo_logo.png" width="75" height="50" alt="YOLO"/>
  </div>
 
 <!-- Project description -->
@@ -54,6 +54,8 @@ but this was a solid base that would eventually allow me to build upon.
 <h1 align="center">Dataset</h1>
 <a href="https://universe.roboflow.com/radu-oprea-r4xnm/traffic-signs-detection-europe">
     <img src="https://app.roboflow.com/images/download-dataset-badge.svg"></img>
+<a href="https://universe.roboflow.com/radu-oprea-r4xnm/traffic-signs-hyipi">
+  <img src="https://app.roboflow.com/images/download-dataset-badge.svg"></img>
 </a>
 <p>There are a lot of free datasets for this particular task but there are some recurring issues 
 with them.</p>
@@ -68,7 +70,6 @@ classifications. This would require a lot of work to label the images.</li>
 <p>With these in mind, I created my own dataset. I tried a bunch of different sources and 
 ultimatelly I achieved my goal of automatically collecting data with a trained model (collected 150-200 images this way).
 </p>
-
 <p></p>
 </div>
 
