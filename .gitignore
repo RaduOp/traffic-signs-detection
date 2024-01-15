@@ -167,11 +167,11 @@ cython_debug/
 /test_files
 /newEnv
 /traffic_signs_recognition/auxiliary_files
-/traffic_signs_recognition/runs
+/traffic_signs_recognition/YoloV8_experiments/runs
 /runs
 *.mp4
 *.pt
 *.jpg
 *.txt
 *.png
-
+traffic_signs_recognition/YoloV8_experiments/yolov5

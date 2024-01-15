@@ -6,13 +6,12 @@ import os.path
 import cv2
 
 from .random_image_cropper import ImageCropper
-from traffic_signs_recognition.YOLOV8.detectors import YoloDetector
+from traffic_signs_recognition import YoloDetector
 from .save_crops import save_one
 
 from traffic_signs_recognition.DatasetFunctionalities import overall_healthcheck
 from traffic_signs_recognition.random_utils import (
     read_class_names_from_yaml,
-    draw_on_image,
     draw_custom_rectangle,
     draw_rectangle_name,
 )
@@ -66,7 +65,7 @@ def process_video(
 
 
 if __name__ == "__main__":
-    model_ckpt_path = "../runs/detect/train13/weights/best.pt"
+    model_ckpt_path = "../YoloV8_experiments/runs/detect/train13/weights/best.pt"
 
     number_of_occurrences = overall_healthcheck("../datasets/original_dataset")
     class_names = read_class_names_from_yaml("../datasets/original_dataset/data.yaml")

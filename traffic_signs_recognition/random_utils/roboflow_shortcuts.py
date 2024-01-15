@@ -53,3 +53,10 @@ def upload_data(path_to_folder: str, path_to_yaml_file: str) -> None:
             batch_name="ADDED_VIA_API",
             is_prediction=True,
         )
+
+
+if __name__ == "__main__":
+    import dotenv
+
+    dotenv.load_dotenv(dotenv.find_dotenv())
+    deploy_model(11, "../YOLOV8/runs/detect/train8/", "yolov8")
