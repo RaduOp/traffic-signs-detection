@@ -54,8 +54,6 @@ but this was a solid base that would eventually allow me to build upon.
 <h1 align="center">Dataset</h1>
 <a href="https://universe.roboflow.com/radu-oprea-r4xnm/traffic-signs-detection-europe">
     <img src="https://app.roboflow.com/images/download-dataset-badge.svg"></img>
-<a href="https://universe.roboflow.com/radu-oprea-r4xnm/traffic-signs-hyipi">
-  <img src="https://app.roboflow.com/images/download-dataset-badge.svg"></img>
 </a>
 <p>There are a lot of free datasets for this particular task but there are some recurring issues 
 with them.</p>
