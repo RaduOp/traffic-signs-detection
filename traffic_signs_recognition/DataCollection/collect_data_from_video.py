@@ -2,12 +2,13 @@
 Collect data from a video using the model and the image cropper.
 """
 import os.path
+import sys
 
 import cv2
 
-from .random_image_cropper import ImageCropper
+
 from traffic_signs_recognition import YoloDetector
-from .save_crops import save_one
+
 
 from traffic_signs_recognition.DatasetFunctionalities import overall_healthcheck
 from traffic_signs_recognition.random_utils import (
@@ -15,6 +16,8 @@ from traffic_signs_recognition.random_utils import (
     draw_custom_rectangle,
     draw_rectangle_name,
 )
+from .random_image_cropper import ImageCropper
+from .save_crops import save_one
 
 
 def process_video(
@@ -27,7 +30,7 @@ def process_video(
     cap = cv2.VideoCapture(path_to_video)
     if not cap.isOpened():
         print("Error: Could not open video.")
-        return None
+        sys.exit()
     width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
     image_detector = YoloDetector(model_ckpt_path, width)
     image_cropper = ImageCropper(whitelisted_classes)

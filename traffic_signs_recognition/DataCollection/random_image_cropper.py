@@ -35,7 +35,7 @@ class ImageCropper:
         """
         whitelisted = []
         not_whitelisted = []
-        for index, detection in enumerate(boxes):
+        for _, detection in enumerate(boxes):
             if detection["conf"] < self.min_confidence:
                 continue
 
@@ -70,7 +70,7 @@ class ImageCropper:
         whitelisted, not_whitelisted = self._split_whitelisted_and_not_whitelisted(
             boxes
         )
-        if not len(whitelisted) > 0:
+        if len(whitelisted) <= 0:
             return final_crops
 
         # Cropping
