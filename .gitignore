@@ -175,3 +175,6 @@ cython_debug/
 *.txt
 *.png
 traffic_signs_recognition/YoloV8_experiments/yolov5
+*.avi
+*.pylintrc
+traffic_signs_recognition/ModelBenchmark/test_data
