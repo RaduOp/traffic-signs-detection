@@ -99,7 +99,7 @@ def draw_rectangle_name(
     :return: image with name drawn for the given rectangle (you might want to draw the rectangle
     first)
     """
-    x1, y1, x2, y2 = map(int, check_coordinates_type(coords))
+    x1, y1, _, _ = map(int, check_coordinates_type(coords))
     cv2.putText(
         frame,
         f"{class_name}, {round(conf, 2)}",
