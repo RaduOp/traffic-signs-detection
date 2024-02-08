@@ -1,5 +1,11 @@
+"""
+Download dataset and modify the yaml file accordingly.
+Train a YOLOv8 or YOLOv5 model.
+"""
+
 import os
 import shutil
+import sys
 
 from ultralytics import YOLO
 import yaml
@@ -24,7 +30,7 @@ def start_training_yolov8(path_to_dataset: str, pretrained_model_path: str):
     def update_yaml_file():
         train_path = os.path.join("train")
         valid_path = os.path.join("valid")
-        with open(path_to_dataset + "/data.yaml", "r") as file:
+        with open(path_to_dataset + "/data.yaml", "r", encoding="utf-8") as file:
             data: dict = yaml.safe_load(file)
 
         # Update the specified field
@@ -33,13 +39,12 @@ def start_training_yolov8(path_to_dataset: str, pretrained_model_path: str):
         if "test" in data.keys():
             del data["test"]
 
-        with open(path_to_dataset + "/data.yaml", "w") as file:
+        with open(path_to_dataset + "/data.yaml", "w", encoding="utf-8") as file:
             yaml.dump(data, file)
 
     update_yaml_file()
 
     model = YOLO(pretrained_model_path)
-    p = os.path.abspath(os.path.join(path_to_dataset, "data.yaml"))
     # Set up the training configuration
     config = {
         "epochs": 100,
@@ -66,7 +71,7 @@ def start_training_yolov5(path_to_dataset: str, pretrained_model_path: str):
             "You need to clone the yolov5 repo first.\n"
             "git clone https://github.com/ultralytics/yolov5)"
         )
-        quit()
+        sys.exit()
 
     def update_yaml_file():
         original_yaml = os.path.join(path_to_dataset, "data.yaml")
@@ -75,7 +80,7 @@ def start_training_yolov5(path_to_dataset: str, pretrained_model_path: str):
 
         train_path = "../../datasets/original_dataset/train"
         valid_path = "../../datasets/original_dataset/valid"
-        with open(copy_yaml, "r") as file:
+        with open(copy_yaml, "r", encoding="utf-8") as file:
             data: dict = yaml.safe_load(file)
 
         # Update the specified field
@@ -84,7 +89,7 @@ def start_training_yolov5(path_to_dataset: str, pretrained_model_path: str):
         if "test" in data.keys():
             del data["test"]
 
-        with open(copy_yaml, "w") as file:
+        with open(copy_yaml, "w", encoding="utf-8") as file:
             yaml.dump(data, file)
 
     update_yaml_file()
@@ -106,8 +111,8 @@ def start_training_yolov5(path_to_dataset: str, pretrained_model_path: str):
 
 
 if __name__ == "__main__":
-    path_to_dataset = "../datasets/original_dataset"
-    pretrained_model_path = "../pretrained_models/yolov8s.pt"
+    PATH_TO_DATASET = "../datasets/original_dataset"
+    PRETRAINED_MODEL_PATH = "../pretrained_models/yolov8s.pt"
 
-    # manage_download(10, download_path=path_to_dataset)
-    start_training_yolov8(path_to_dataset, pretrained_model_path)
+    # manage_download(10, download_path=PATH_TO_DATASET)
+    start_training_yolov8(PATH_TO_DATASET, PRETRAINED_MODEL_PATH)

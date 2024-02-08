@@ -9,6 +9,7 @@ from roboflow import Roboflow
 
 
 def setup_roboflow_project():
+    """Setup a project with the API KEY."""
     rf = Roboflow(api_key=os.getenv("ROBOFLOW_API_KEY"))
     project = rf.workspace(os.getenv("ROBOFLOW_WORKSPACE")).project(
         os.getenv("ROBOFLOW_PROJECT")

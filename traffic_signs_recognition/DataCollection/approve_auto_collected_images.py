@@ -8,7 +8,6 @@ moment.
 It also helps avoid the slow process of deleting an image that's been uploaded to the dataset on
 roboflow. It takes roughly 10-20 seconds to delete an image on Roboflow.
 """
-import argparse
 import os
 
 import cv2
@@ -23,7 +22,7 @@ def check_collected_images(path_to_folder: str, delete_key: str, quit_key: str):
 
         image = cv2.imread(current_picture)
 
-        with open(current_label, "r") as label_file:
+        with open(current_label, "r", encoding="utf-8") as label_file:
             for line in label_file:
                 label = [float(el) for el in line.strip().split(" ")]
                 image = draw_custom_rectangle(image, label[1:])
@@ -37,13 +36,11 @@ def check_collected_images(path_to_folder: str, delete_key: str, quit_key: str):
                 os.remove(current_picture)
                 os.remove(current_label)
                 print(
-                    f"Image and label deleted: ", image_name, image_name[:-4] + ".txt"
+                    f"Image and label deleted:  {image_name}, {image_name[:-4]} + .txt"
                 )
             else:
                 print(
-                    f"Delete failed, label or image is missing: ",
-                    image_name,
-                    image_name[:-4] + ".txt",
+                    f"Delete failed, label or image is missing:{image_name} {image_name[:-4]}.txt"
                 )
 
         else:
@@ -52,7 +49,7 @@ def check_collected_images(path_to_folder: str, delete_key: str, quit_key: str):
 
 
 if __name__ == "__main__":
-    delete_key = "d"
-    quit_key = "q"
-    location = "../collected_images/run_1"
-    check_collected_images(location, delete_key, quit_key)
+    DELETE_KEY = "d"
+    QUIT_KEY = "q"
+    LOCATION = "../collected_images/run_1"
+    check_collected_images(LOCATION, DELETE_KEY, QUIT_KEY)

@@ -1,10 +1,18 @@
 # Core
 opencv-python
 torch>=2.1.0+cu121
-torchaudio>=2.1.0+cu121
 ultralytics
 roboflow
 pyautogui
+pandas
+python-dotenv
+pyperclip
+numpy
+PyYAML
+mss
+matplotlib
 
-# Text formating
+
+# Text formating and linting
 black
+pylint

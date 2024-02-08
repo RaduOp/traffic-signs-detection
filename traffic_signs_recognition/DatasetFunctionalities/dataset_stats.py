@@ -1,10 +1,9 @@
 import os
-from collections import Counter, OrderedDict
+from collections import Counter
 
 from matplotlib import pyplot as plt
 
 from traffic_signs_recognition.random_utils import read_class_names_from_yaml
-import cv2
 import pandas as pd
 
 
@@ -39,12 +38,12 @@ def overall_healthcheck(path_to_dataset: str, split: str = "all", plot: bool = F
         class_names = read_class_names_from_yaml(
             os.path.join(path_to_dataset, "data.yaml")
         )
-    except FileNotFoundError:
-        raise FileNotFoundError("Yaml file not found")
+    except FileNotFoundError as exc:
+        raise FileNotFoundError("Yaml file not found") from exc
     try:
         df = pd.read_csv(os.path.join(path_to_dataset, "dataset.csv"))
-    except FileNotFoundError:
-        raise FileNotFoundError("CSV file not found.")
+    except FileNotFoundError as exc:
+        raise FileNotFoundError("CSV file not found.") from exc
 
     if split == "all":
         current_split = df["label"].tolist()

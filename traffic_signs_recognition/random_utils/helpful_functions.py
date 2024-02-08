@@ -13,5 +13,5 @@ def read_class_names_from_yaml(path_to_yaml_file: str) -> list[str]:
     :param path_to_yaml_file: Location of the data.yaml file, usually in the dataset folder
     :return: a list of class names
     """
-    with open(path_to_yaml_file, "r") as f:
+    with open(path_to_yaml_file, "r", encoding="utf-8") as f:
         return yaml.safe_load(f)["names"]
