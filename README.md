@@ -115,10 +115,11 @@ These methods are good for automatic data collection, especially if you plan on 
 checking the data later.
 
 </div>
-
+  
 <!-- Results -->
 <div align="left">
 <h1 align="center">Results</h1>
+  https://github.com/RaduOp/traffic-signs-detection/blob/main/readme_assets/result_video.mp4
 <p> COMING SOON
 </p>
 </div>
